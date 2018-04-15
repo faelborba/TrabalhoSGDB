@@ -36,8 +36,8 @@ public class TrataProtocolo extends Thread implements Serializable {
 	@Override
 	public void run() {
 		String protocolo = null;
-		String ip = null;
-		int porta = 0;
+		String hostAluno = null, hostTurma = null;
+		int portaAluno = 0, portaTurma = 0;
 		String textoJson = "", textoConfig = "";
 		File arquivo = null;
 		Scanner pegaTexto = null;
@@ -55,25 +55,27 @@ public class TrataProtocolo extends Thread implements Serializable {
 			arquivo = new File("tmp/ConfigGerenciador.json");// fazendo um objeto arquivo
 			if (!arquivo.exists()) {// testando se o arquivo de configuração existe
 				System.out.println("GerenciadorServer: Arquivo de configuração inexistente");
-			}else{
+			} else {
 				System.out.println("GerenciadorServer: Abrindo arquivo de configuração...");
 				pegaTexto = new Scanner(arquivo); // pega texto do arquivo
 				textoConfig = new ConverteEmString().converteJson(pegaTexto);
 				System.out.println("GerenciadorServer: *teste*\n" + textoConfig);
 				config = gson.fromJson(textoConfig, ConfigGerenciador.class);// converte json em object
 			}
-			if (dados[1].equals("incluiTurma") || dados[1].equals("turma") || dados[1].equals("turmas") || dados[1].equals("apagaTurma")) {
-				porta = config.getClassServerPort();
-				ip = config.getClassServerHost();
-			}	
-			if (dados[1].equals("incluiAluno") || dados[1].equals("aluno") || dados[1].equals("alunos") || dados[1].equals("apagaAluno")) {
-				porta = config.getClassServerPort();
-				ip = config.getStudentServerHost();
-			}
-			Socket s = new Socket(ip, porta);// conecta no server
+
+			portaTurma = config.getClassServerPort();
+			hostTurma = config.getClassServerHost();
+			Socket conTurma = new Socket(hostTurma, portaTurma);// conecta no server
 			// entrada, variável responsável pela retorno do server turma/aluno
-			Scanner entrada = new Scanner(new InputStreamReader(s.getInputStream()));
-			PrintWriter saida = new PrintWriter(s.getOutputStream());
+			Scanner entradaTurma = new Scanner(new InputStreamReader(conTurma.getInputStream()));
+			PrintWriter saidaTurma = new PrintWriter(conTurma.getOutputStream());
+
+			portaAluno = config.getStudentServerPort();
+			hostAluno = config.getStudentServerHost();			
+			Socket conAluno = new Socket(hostAluno, portaAluno);// conecta no server
+			// entrada, variável responsável pela retorno do server turma/aluno
+			Scanner entradaAluno = new Scanner(new InputStreamReader(conAluno.getInputStream()));
+			PrintWriter saidaAluno= new PrintWriter(conAluno.getOutputStream());
 
 			saida.println(protocolo);// envia protocolo ao server
 			saida.flush();
@@ -90,9 +92,13 @@ public class TrataProtocolo extends Thread implements Serializable {
 				CodigoRetorna codigoRetorna = gson.fromJson(textoJson, CodigoRetorna.class);// Converte String em Objeto
 			}
 
-			entrada.close();
-			saida.close();
-			s.close();
+			entradaTurma.close();
+			saidaTurma.close();
+			conTurma.close();
+			
+			entradaAluno.close();
+			saidaAluno.close();
+			conAluno.close();
 
 		} catch (UnknownHostException ex) {
 			System.out.println("GerenciadorServer: Host desconhecido");
