@@ -37,7 +37,7 @@ public class TrataProtocolo extends Thread implements Serializable {
 	public void run() {
 		String protocolo = null;
 		String ip = null;
-		String porta = null;
+		int porta = 0;
 		String textoJson = "", textoConfig = "";
 		File arquivo = null;
 		Scanner pegaTexto = null;
@@ -52,22 +52,25 @@ public class TrataProtocolo extends Thread implements Serializable {
 		System.out.println("GerenciadorServer: Vou executar o comando " + dados[1]);
 
 		try {
-			if (dados[1].equals("incluiTurma") || dados[1].equals("turma") || dados[1].equals("turmas") || dados[1].equals("apagaTurma")) {
-				arquivo = new File("tmp/ConfigGerenciador.json");// fazendo um objeto arquivo
-				if (!arquivo.exists()) {// testando se o arquivo de configuração existe
-					System.out.println("GerenciadorServer: Arquivo de configuração inexistente");
-				}
+			arquivo = new File("tmp/ConfigGerenciador.json");// fazendo um objeto arquivo
+			if (!arquivo.exists()) {// testando se o arquivo de configuração existe
+				System.out.println("GerenciadorServer: Arquivo de configuração inexistente");
+			}else{
 				System.out.println("GerenciadorServer: Abrindo arquivo de configuração...");
 				pegaTexto = new Scanner(arquivo); // pega texto do arquivo
 				textoConfig = new ConverteEmString().converteJson(pegaTexto);
 				System.out.println("GerenciadorServer: *teste*\n" + textoConfig);
-
 				config = gson.fromJson(textoConfig, ConfigGerenciador.class);// converte json em object
-				porta = Integer.toString(config.getClassServerPort());
-				ip = config.getClassServerHost();
-
 			}
-			Socket s = new Socket(ip, Integer.parseInt(porta));// conecta no server
+			if (dados[1].equals("incluiTurma") || dados[1].equals("turma") || dados[1].equals("turmas") || dados[1].equals("apagaTurma")) {
+				porta = config.getClassServerPort();
+				ip = config.getClassServerHost();
+			}	
+			if (dados[1].equals("incluiAluno") || dados[1].equals("aluno") || dados[1].equals("alunos") || dados[1].equals("apagaAluno")) {
+				porta = config.getClassServerPort();
+				ip = config.getStudentServerHost();
+			}
+			Socket s = new Socket(ip, porta);// conecta no server
 			// entrada, variável responsável pela retorno do server turma/aluno
 			Scanner entrada = new Scanner(new InputStreamReader(s.getInputStream()));
 			PrintWriter saida = new PrintWriter(s.getOutputStream());
