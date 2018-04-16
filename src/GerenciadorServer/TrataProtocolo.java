@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 
-import ServerAluno.TabelaAluno;
+
 import ServerTurma.Turmas;
 import ServerTurma.Turma;
 

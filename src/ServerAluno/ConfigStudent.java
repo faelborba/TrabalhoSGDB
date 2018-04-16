@@ -1,6 +1,6 @@
-package ServerTurma;
+package ServerAluno;
 
-public class ConfigClass {
+public class ConfigStudent {
 	public int port = 0; // Porta onde vai aceitar requisições
 	public String datafile = ""; // Localização do arquivo de dados
 
