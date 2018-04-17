@@ -35,8 +35,8 @@ public class TrataProtocolo extends Thread implements Serializable {
 	@Override
 	public void run() {
 		String protocolo = null;
-		String ip = null;
-		int porta = 0;
+		String ip = null, ipTurma = null, ipAluno = null;
+		int porta = 0, portaTurma = 0, portaAluno = 0;
 		String textoJson = "", textoConfig = "";
 		File arquivo = null;
 		Scanner pegaTexto = null;
@@ -59,36 +59,46 @@ public class TrataProtocolo extends Thread implements Serializable {
 			pegaTexto = new Scanner(arquivo); // pega texto do arquivo
 			textoConfig = new ConverteEmString().converteJson(pegaTexto);
 			System.out.println("GerenciadorServer: *teste*\n" + textoConfig);
+			
+			config = gson.fromJson(textoConfig, ConfigGerenciador.class);// converte json em object
+			portaTurma = config.getClassServerPort();
+			ipTurma = config.getClassServerHost();
+			portaAluno = config.getStudentServerPort();
+			ipAluno = config.getStudentServerHost();
+			Socket socketTurma = null, socketAluno = null;
+			
 			if (dados[1].equals("incluiTurma") || dados[1].equals("turma") || dados[1].equals("turmas")
 					|| dados[1].equals("apagaTurma")) {
-				config = gson.fromJson(textoConfig, ConfigGerenciador.class);// converte json em object
-				porta = config.getClassServerPort();
-				ip = config.getClassServerHost();
-				Socket s = new Socket(ip, porta);// conecta no server
+				
+				socketTurma = new Socket(ipTurma, portaTurma);// conecta no server
 				// entrada, variável responsável pela retorno do server turma/aluno
-				Scanner entrada = new Scanner(new InputStreamReader(s.getInputStream()));
-				PrintWriter saida = new PrintWriter(s.getOutputStream());
-
-				saida.println(protocolo);// envia protocolo ao server
-				saida.flush();
+				Scanner entradaTurma = new Scanner(new InputStreamReader(socketTurma.getInputStream()));
+				PrintWriter saida = new PrintWriter(socketTurma.getOutputStream());
 				System.out.println(
 						"GerenciadorServer: Enviando protocolo " + protocolo + " para o banco Correspondente!");
-			}
+				saida.println(protocolo);// envia protocolo ao server
+				saida.flush();
 
-			if (dados[1].equals("turma") || dados[1].equals("turmas")) {
-				textoJson = new ConverteEmString().converteJson(entrada);// converte variavel entrada e em string
-				System.out.println(textoJson);// teste
-				Turma turma = gson.fromJson(textoJson, Turma.class);// Converte String em Objeto turma
+				if (dados[1].equals("turma") || dados[1].equals("turmas")) {
+					textoJson = new ConverteEmString().converteJson(entradaTurma);// converte variavel entrada e em string
+					System.out.println(textoJson);// teste
+					Turma turma = gson.fromJson(textoJson, Turma.class);// Converte String em Objeto turma
+				}
+				if (dados[1].equals("incluiTurma") || dados[1].equals("apagaTurma")) {
+					textoJson = new ConverteEmString().converteJson(entradaTurma);// converte variavel entrada e em string
+					System.out.println(textoJson);// teste
+					CodigoRetorna codigoRetorna = gson.fromJson(textoJson, CodigoRetorna.class);// Converte String em
+																								// Objeto
+				}
+				socketTurma.close();
 			}
-			if (dados[1].equals("incluiTurma") || dados[1].equals("apagaTurma")) {
-				textoJson = new ConverteEmString().converteJson(entrada);// converte variavel entrada e em string
-				System.out.println(textoJson);// teste
-				CodigoRetorna codigoRetorna = gson.fromJson(textoJson, CodigoRetorna.class);// Converte String em Objeto
+			if (dados[1].equals("incluiAluno")) {
+				socketAluno = new Socket(ipAluno, portaAluno);
+				Scanner entradaAluno = new Scanner(new InputStreamReader(socketAluno.getInputStream()));
 			}
 
 			entrada.close();
 			saida.close();
-			s.close();
 
 		} catch (UnknownHostException ex) {
 			System.out.println("GerenciadorServer: Host desconhecido");

@@ -124,14 +124,15 @@ public class TrataTurma extends Thread implements Serializable {
 					}
 				}
 				if (dados[1].equals("apagaTurma")) {
+					boolean apagou = false;
 					System.out.println(dados[1]);
 					CodigoRetorna codigoRetorna = new CodigoRetorna();
 					for (i = 0; i < tabelaTurma.getTurmas().size(); i++) {
 						if (Integer.parseInt(dados[2]) == tabelaTurma.getTurmas().get(i).getIdTurma()) {
 							System.out.println("Server Turma: Id Turma encontrada.\n Apagando Registro.");
-							tabelaTurma.getTurmas().remove(i)/* .equals(tabelaTurma.getTurmas().get(i)) */;
+							tabelaTurma.getTurmas().remove(i);//apagando do arraylist
 
-							System.out.println("Server Turma: Gravando: " + dados[1]);
+ 							System.out.println("Server Turma: Gravando: " + dados[1]);
 							streamSaida = new ObjectOutputStream(new FileOutputStream(arquivo));
 							streamSaida.writeObject(tabelaTurma);// Grava o arraylist dentro do arquivo
 							streamSaida.close();
@@ -144,9 +145,11 @@ public class TrataTurma extends Thread implements Serializable {
 							this.saida.println(textoRetorna);// devolvendo para o cliente em json
 							this.saida.flush();
 							this.saida.close();
+							apagou = true;
+							break;
 						}
 					}
-					if (i == tabelaTurma.getTurmas().size()) {
+					if (!apagou) {
 						codigoRetorna.setCodRetorno(2);
 						codigoRetorna.setDescricaoRetorno("Erro de Relacionamento");
 						textoRetorna = objJson.toJson(codigoRetorna);
