@@ -1,8 +1,11 @@
 package ServerAluno;
+
+import java.util.ArrayList;
+
 public class Aluno {
 	private int idAluno;
 	private String nomeAluno;
-	private int idTurmaAluno;
+	private ArrayList<Integer> turmas = null;
 	public int getIdAluno() {
 		return idAluno;
 	}
@@ -15,10 +18,5 @@ public class Aluno {
 	public void setNomeAluno(String nomeAluno) {
 		this.nomeAluno = nomeAluno;
 	}
-	public int getIdTurmaAluno() {
-		return idTurmaAluno;
-	}
-	public void setIdTurmaAluno(int idTurmaAluno) {
-		this.idTurmaAluno = idTurmaAluno;
-	}
+	
 }

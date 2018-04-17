@@ -36,7 +36,7 @@ public class ServerAluno {
 
 			ServerSocket server = new ServerSocket(porta);// abre uma conexão na porta definida no arquivo de
 															// configuração.
-			System.out.println("Server Aluno: Server de Banco Turma online...");
+			System.out.println("Server Aluno: Server de Banco Aluno online...");
 			while (true) {
 				System.out.println("Server Aluno: Aguardando Conexão...");
 				Socket cliente = server.accept();

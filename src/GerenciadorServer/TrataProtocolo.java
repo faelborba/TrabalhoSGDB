@@ -16,7 +16,6 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 
-
 import ServerTurma.Turmas;
 import ServerTurma.Turma;
 
@@ -36,8 +35,8 @@ public class TrataProtocolo extends Thread implements Serializable {
 	@Override
 	public void run() {
 		String protocolo = null;
-		String hostAluno = null, hostTurma = null;
-		int portaAluno = 0, portaTurma = 0;
+		String ip = null;
+		int porta = 0;
 		String textoJson = "", textoConfig = "";
 		File arquivo = null;
 		Scanner pegaTexto = null;
@@ -55,31 +54,26 @@ public class TrataProtocolo extends Thread implements Serializable {
 			arquivo = new File("tmp/ConfigGerenciador.json");// fazendo um objeto arquivo
 			if (!arquivo.exists()) {// testando se o arquivo de configuração existe
 				System.out.println("GerenciadorServer: Arquivo de configuração inexistente");
-			} else {
-				System.out.println("GerenciadorServer: Abrindo arquivo de configuração...");
-				pegaTexto = new Scanner(arquivo); // pega texto do arquivo
-				textoConfig = new ConverteEmString().converteJson(pegaTexto);
-				System.out.println("GerenciadorServer: *teste*\n" + textoConfig);
-				config = gson.fromJson(textoConfig, ConfigGerenciador.class);// converte json em object
 			}
+			System.out.println("GerenciadorServer: Abrindo arquivo de configuração...");
+			pegaTexto = new Scanner(arquivo); // pega texto do arquivo
+			textoConfig = new ConverteEmString().converteJson(pegaTexto);
+			System.out.println("GerenciadorServer: *teste*\n" + textoConfig);
+			if (dados[1].equals("incluiTurma") || dados[1].equals("turma") || dados[1].equals("turmas")
+					|| dados[1].equals("apagaTurma")) {
+				config = gson.fromJson(textoConfig, ConfigGerenciador.class);// converte json em object
+				porta = config.getClassServerPort();
+				ip = config.getClassServerHost();
+				Socket s = new Socket(ip, porta);// conecta no server
+				// entrada, variável responsável pela retorno do server turma/aluno
+				Scanner entrada = new Scanner(new InputStreamReader(s.getInputStream()));
+				PrintWriter saida = new PrintWriter(s.getOutputStream());
 
-			portaTurma = config.getClassServerPort();
-			hostTurma = config.getClassServerHost();
-			Socket conTurma = new Socket(hostTurma, portaTurma);// conecta no server
-			// entrada, variável responsável pela retorno do server turma/aluno
-			Scanner entradaTurma = new Scanner(new InputStreamReader(conTurma.getInputStream()));
-			PrintWriter saidaTurma = new PrintWriter(conTurma.getOutputStream());
-
-			portaAluno = config.getStudentServerPort();
-			hostAluno = config.getStudentServerHost();			
-			Socket conAluno = new Socket(hostAluno, portaAluno);// conecta no server
-			// entrada, variável responsável pela retorno do server turma/aluno
-			Scanner entradaAluno = new Scanner(new InputStreamReader(conAluno.getInputStream()));
-			PrintWriter saidaAluno= new PrintWriter(conAluno.getOutputStream());
-
-			saida.println(protocolo);// envia protocolo ao server
-			saida.flush();
-			System.out.println("GerenciadorServer: Enviando protocolo " + protocolo + " para o banco Correspondente!");
+				saida.println(protocolo);// envia protocolo ao server
+				saida.flush();
+				System.out.println(
+						"GerenciadorServer: Enviando protocolo " + protocolo + " para o banco Correspondente!");
+			}
 
 			if (dados[1].equals("turma") || dados[1].equals("turmas")) {
 				textoJson = new ConverteEmString().converteJson(entrada);// converte variavel entrada e em string
@@ -92,13 +86,9 @@ public class TrataProtocolo extends Thread implements Serializable {
 				CodigoRetorna codigoRetorna = gson.fromJson(textoJson, CodigoRetorna.class);// Converte String em Objeto
 			}
 
-			entradaTurma.close();
-			saidaTurma.close();
-			conTurma.close();
-			
-			entradaAluno.close();
-			saidaAluno.close();
-			conAluno.close();
+			entrada.close();
+			saida.close();
+			s.close();
 
 		} catch (UnknownHostException ex) {
 			System.out.println("GerenciadorServer: Host desconhecido");

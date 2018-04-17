@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Alunos implements Serializable {
-	private ArrayList<Aluno> alunos;
+	private ArrayList<Aluno> alunos = null;
 	
 	public Alunos(ArrayList<Aluno> alunos) {
 		this.alunos = alunos;
