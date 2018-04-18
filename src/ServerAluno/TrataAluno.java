@@ -1,6 +1,8 @@
 package ServerAluno;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,6 +15,7 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import GerenciadorServer.CodigoRetorna;
 import GerenciadorServer.ConverteEmString;
 
 public class TrataAluno extends Thread implements Serializable {
@@ -33,6 +36,7 @@ public class TrataAluno extends Thread implements Serializable {
 		ObjectOutputStream streamSaida = null;
 		ArrayList<Aluno> alunos = null;
 		Alunos tabelaAluno = null;
+		Aluno aluno = null;
 		Gson objJson = new GsonBuilder().setPrettyPrinting().create();
 		Gson gson = new Gson();
 		Scanner pegaTexto = null;
@@ -58,12 +62,78 @@ public class TrataAluno extends Thread implements Serializable {
 				pegaTexto = new Scanner(arquivo);
 				textoConfig = new ConverteEmString().converteJson(pegaTexto);
 				System.out.println("Server Aluno: *Arquvio ConfigStudent.json*\n" + textoConfig);
-				
+
 				config = gson.fromJson(textoConfig, ConfigStudent.class);
 				caminhoBanco = config.getDatafile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
+			arquivo = new File(caminhoBanco);
+			if (!arquivo.exists()) {
+				System.out.println("Server Aluno: Arquivo insexistente, Criando DB");
+				try {
+					streamSaida = new ObjectOutputStream(new FileOutputStream(arquivo));
+					alunos = new ArrayList<>();
+					tabelaAluno = new Alunos(alunos);
+					streamSaida.writeObject(tabelaAluno);
+					streamSaida.close();
+					System.out.println("Server Aluno: *Arquivo criado com sucesso");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				int i = 0;
+				System.out.println("Server Aluno: Abrindo arquivo Aluno...");
+				inputStream = new ObjectInputStream(new FileInputStream(arquivo));
+				System.out.println("Server Aluno: Buscando tabela de aluno");
+				tabelaAluno = (Alunos) inputStream.readObject();
+				System.out.println("Server Aluno: Tabela Aluno encontrada");
+				System.out.print("Server Aluno: Vou executar o comando:");
+
+				// Arquivo criado aagora vamos trabalhar com ele
+				if (dados[1].equals("incluiTurma")) {
+					System.out.println(dados[1]);
+					CodigoRetorna codigoRetorna = new CodigoRetorna();
+					for (i = 0; i < tabelaAluno.getAlunos().size(); i++) {// teste ID já cadastrado.
+						if (Integer.parseInt(dados[2]) == tabelaAluno.getAlunos().get(i).getIdAluno()) {
+							System.out.println("Server Aluno: ID Aluno Já Cadastrado.");
+							codigoRetorna.setCodRetorno(1);
+							codigoRetorna.setDescricaoRetorno("Registro Já cadastrado");
+							textoRetorna = objJson.toJson(codigoRetorna);
+							System.out.println(textoRetorna);// mostra o que retorna
+							this.saida.println(textoRetorna);
+							this.saida.flush();
+							this.saida.close();
+							break;
+						}
+					}
+					if (i == tabelaAluno.getAlunos().size()) {
+						aluno = new Aluno();
+						aluno.setIdAluno(Integer.parseInt(dados[2]));
+						aluno.setNomeAluno(dados[3]);
+						tabelaAluno.getAlunos().add(aluno);// add aluno em arraylist
+
+						System.out.println("Server Aluno: Gravando: " + dados[1]);
+						streamSaida = new ObjectOutputStream(new FileOutputStream(arquivo));
+						streamSaida.writeObject(tabelaAluno);
+						streamSaida.close();
+						
+						codigoRetorna.setCodRetorno(0);
+						codigoRetorna.setDescricaoRetorno("Requisição OK");
+						textoRetorna = objJson.toJson(codigoRetorna);
+						System.out.println(textoRetorna);// mostrando o conteudo json
+
+						this.saida.println(textoRetorna);// devolvendo para o cliente em json
+						this.saida.flush();
+						this.saida.close();
+					}
+				}
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 	}

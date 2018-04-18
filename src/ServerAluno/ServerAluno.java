@@ -21,7 +21,7 @@ public class ServerAluno {
 			Gson gson = new Gson();
 			int porta = 0;
 
-			System.out.println("Server Aluno: Iniciando Server de Banco Turma...");
+			System.out.println("Server Aluno: Iniciando Server de Banco Aluno...");
 			arquivo = new File("tmp/ConfigStudent.json");// fazendo um objeto arquivo
 			if (!arquivo.exists()) {// testando se o arquivo já existe, caso não exista cria um novo
 				System.out.println("Server Aluno: Arquivo de configuração inexistente");
