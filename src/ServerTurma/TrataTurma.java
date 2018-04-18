@@ -217,10 +217,6 @@ public class TrataTurma extends Thread implements Serializable {
 					}
 
 				}
-				if (dados[1].equals("turmas")) {
-
-				}
-
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}

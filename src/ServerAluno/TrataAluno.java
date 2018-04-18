@@ -91,9 +91,8 @@ public class TrataAluno extends Thread implements Serializable {
 				tabelaAluno = (Alunos) inputStream.readObject();
 				System.out.println("Server Aluno: Tabela Aluno encontrada");
 				System.out.print("Server Aluno: Vou executar o comando:");
-
 				// Arquivo criado aagora vamos trabalhar com ele
-				if (dados[1].equals("incluiTurma")) {
+				if (dados[1].equals("incluiAluno")) {
 					System.out.println(dados[1]);
 					CodigoRetorna codigoRetorna = new CodigoRetorna();
 					for (i = 0; i < tabelaAluno.getAlunos().size(); i++) {// teste ID já cadastrado.
@@ -115,11 +114,12 @@ public class TrataAluno extends Thread implements Serializable {
 						aluno.setNomeAluno(dados[3]);
 						tabelaAluno.getAlunos().add(aluno);// add aluno em arraylist
 
-						System.out.println("Server Aluno: Gravando: " + dados[1]);
+						System.out.println("Server Aluno: Gravando: " + protocolo);
+						System.out.println(tabelaAluno.getAlunos().get(0).getNomeAluno());// teste
 						streamSaida = new ObjectOutputStream(new FileOutputStream(arquivo));
 						streamSaida.writeObject(tabelaAluno);
 						streamSaida.close();
-						
+
 						codigoRetorna.setCodRetorno(0);
 						codigoRetorna.setDescricaoRetorno("Requisição OK");
 						textoRetorna = objJson.toJson(codigoRetorna);
