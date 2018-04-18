@@ -23,7 +23,8 @@ public class ClientTest {
 				PrintWriter saida = new PrintWriter(s.getOutputStream());
 
 				System.out.println("O que deseja fazer?\n 1 adicionar uma Turma?\n 2 PEsquisar uma turma?"
-						+ "\n 3 Excluir turma?\n 4 Mostrar todas as turmas." + "\n 5 Adicionar Aluno");
+						+ "\n 3 Excluir turma?\n 4 Mostrar todas as turmas." + 
+						"\n 5 Adicionar Aluno\n 6 Buscar um Aluno");
 				r = teclado.nextLine();
 				if (r.equals("1")) {
 					System.out.println("Digite o codigo da turma a ser inserida");
@@ -45,6 +46,9 @@ public class ClientTest {
 					protocolo = protocolo + "/" + teclado.nextLine();
 					System.out.println("Digite a Lista de turmas separado por virgula (,).");
 					protocolo = protocolo + "/" + teclado.nextLine();
+				}else if (r.equals("6")) {
+					System.out.println("Digite o codigo do aluno para busca");
+					protocolo = "/aluno/" + teclado.nextLine();
 				}
 
 				System.out.println("Enviando protocolo " + protocolo + " para o server gerente!");
