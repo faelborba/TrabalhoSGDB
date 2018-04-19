@@ -6,8 +6,12 @@ import java.util.ArrayList;
 public class Aluno implements Serializable {
 	private int idAluno;
 	private String nomeAluno;
-	private ArrayList<Integer> turmas = null;
-
+	private ArrayList<TurmaId> turmas = null;
+	
+	public Aluno(ArrayList<TurmaId> turmas) {
+		this.turmas = turmas;
+	}
+	
 	public int getIdAluno() {
 		return idAluno;
 	}
@@ -24,12 +28,14 @@ public class Aluno implements Serializable {
 		this.nomeAluno = nomeAluno;
 	}
 
-	public ArrayList<Integer> getTurmas() {
+	public ArrayList<TurmaId> getTurmas() {
 		return turmas;
 	}
 
-	public void setTurmas(ArrayList<Integer> turmas) {
+	public void setTurmas(ArrayList<TurmaId> turmas) {
 		this.turmas = turmas;
 	}
+
+
 
 }

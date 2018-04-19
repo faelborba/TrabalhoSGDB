@@ -109,21 +109,17 @@ public class TrataAluno extends Thread implements Serializable {
 						}
 					}
 					if (i == tabelaAluno.getAlunos().size()) {
-						ArrayList<Integer> turmas = null;
-						aluno = new Aluno();
+						ArrayList<TurmaId> turmas = new ArrayList<TurmaId>();
+						String idTurmas[] = dados[4].split(",");
+
+						System.out.println("Tamanho array" + idTurmas.length);
+						for (int j = 0; j < idTurmas.length; j++) {
+							System.out.println("Rodando " + idTurmas[j]);
+							turmas.add(new TurmaId(Integer.parseInt(idTurmas[j])));
+						}
+						aluno = new Aluno(turmas);
 						aluno.setIdAluno(Integer.parseInt(dados[2]));
 						aluno.setNomeAluno(dados[3]);
-						String idTurmas[] = dados[4].split(",");
-						/*
-						 * System.out.println("TESTE:: 0 ::"+ idTurmas[0]);
-						 * System.out.println("TESTE:: 1 ::"+ idTurmas[1]);
-						 */
-						for (int j = 0; j < idTurmas.length; j++) {
-							System.out.println("Rodando"+idTurmas[j]);
-//							turmas.add(Integer.parseInt(idTurmas[j]));
-							turmas.spliterator();
-						}
-						
 
 						tabelaAluno.getAlunos().add(aluno);// add aluno em arraylist
 
@@ -146,14 +142,14 @@ public class TrataAluno extends Thread implements Serializable {
 				if (dados[1].equals("aluno")) {
 					System.out.println(dados[1]);
 					CodigoRetorna codigoRetorna = new CodigoRetorna();
-					
 
 					for (i = 0; i < tabelaAluno.getAlunos().size(); i++) {
 						System.out.println("Server Aluno: procurando Aluno");
 						if (Integer.parseInt(dados[2]) == tabelaAluno.getAlunos().get(i).getIdAluno()) {
-							aluno = new Aluno();
-							aluno.setIdAluno(tabelaAluno.getAlunos().get(i).getIdAluno());
-							aluno.setNomeAluno(tabelaAluno.getAlunos().get(i).getNomeAluno());
+							// aluno = new Aluno();
+							aluno = tabelaAluno.getAlunos().get(i);
+							// aluno.setIdAluno(tabelaAluno.getAlunos().get(i).getIdAluno());
+							// aluno.setNomeAluno(tabelaAluno.getAlunos().get(i).getNomeAluno());
 
 							textoRetorna = objJson.toJson(aluno);
 							System.out.println(textoRetorna);
