@@ -55,8 +55,15 @@ public class TrataAluno extends Thread implements Serializable {
 
 		arquivo = new File("tmp/ConfigStudent.json");// fazendo um objeto arquivo
 		if (!arquivo.exists()) {
+			CodigoRetorna codigoRetorna = new CodigoRetorna();
 			System.out.println("Server Aluno: Arquivo de configuração inexistente");
-
+			codigoRetorna.setCodRetorno(3);
+			codigoRetorna.setDescricaoRetorno("Servidor Indisponível");
+			textoRetorna = objJson.toJson(codigoRetorna);
+			System.out.println(textoRetorna);// mostra o que retorna
+			this.saida.println(textoRetorna);
+			this.saida.flush();
+			this.saida.close();
 		} else {
 			System.out.println("Server Aluno: Abrindo arquivo de configuração...");
 			try {
