@@ -23,8 +23,8 @@ public class ClientTest {
 				PrintWriter saida = new PrintWriter(s.getOutputStream());
 
 				System.out.println("O que deseja fazer?\n 1 adicionar uma Turma?\n 2 PEsquisar uma turma?"
-						+ "\n 3 Excluir turma?\n 4 Mostrar todas as turmas." + 
-						"\n 5 Adicionar Aluno\n 6 Buscar um Aluno");
+						+ "\n 3 Excluir turma?\n 4 Mostrar todas as turmas."
+						+ "\n 5 Adicionar Aluno\n 6 Buscar um Aluno\n 7 Buscar todos os alunos7\n 8 Apagar Aluno");
 				r = teclado.nextLine();
 				if (r.equals("1")) {
 					System.out.println("Digite o codigo da turma a ser inserida");
@@ -38,6 +38,7 @@ public class ClientTest {
 					System.out.println("Digite o codigo da turma Para Excluir");
 					protocolo = "/apagaTurma/" + teclado.nextLine();
 				} else if (r.equals("4")) {
+					System.out.println("exclusão de Turma");
 					protocolo = "/turmas/";
 				} else if (r.equals("5")) {
 					System.out.println("Digite o codigo do Aluno a ser inserido");
@@ -46,9 +47,14 @@ public class ClientTest {
 					protocolo = protocolo + "/" + teclado.nextLine();
 					System.out.println("Digite a Lista de turmas separado por virgula (,).");
 					protocolo = protocolo + "/" + teclado.nextLine();
-				}else if (r.equals("6")) {
-					System.out.println("Digite o codigo do aluno para busca");
+				} else if (r.equals("6")) {
+					System.out.println("exclusão de Aluno");
 					protocolo = "/aluno/" + teclado.nextLine();
+				} else if (r.equals("7")) {
+					protocolo = "/alunos";
+				} else if (r.equals("8")) {
+					System.out.println("Digite o codigo do aluno para ser excluido.");
+					protocolo = "/apagaAluno/" + teclado.nextLine();
 				}
 
 				System.out.println("Enviando protocolo " + protocolo + " para o server gerente!");

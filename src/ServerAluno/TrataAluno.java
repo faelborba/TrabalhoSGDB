@@ -54,8 +54,9 @@ public class TrataAluno extends Thread implements Serializable {
 		String dados[] = protocolo.split("/");// Dividindo o protocolo em várias strings
 
 		arquivo = new File("tmp/ConfigStudent.json");// fazendo um objeto arquivo
-		if (!arquivo.exists()) {// testando se o arquivo já existe, caso não exista cria um novo
+		if (!arquivo.exists()) {
 			System.out.println("Server Aluno: Arquivo de configuração inexistente");
+
 		} else {
 			System.out.println("Server Aluno: Abrindo arquivo de configuração...");
 			try {
@@ -142,24 +143,71 @@ public class TrataAluno extends Thread implements Serializable {
 				if (dados[1].equals("aluno")) {
 					System.out.println(dados[1]);
 					CodigoRetorna codigoRetorna = new CodigoRetorna();
-
 					for (i = 0; i < tabelaAluno.getAlunos().size(); i++) {
 						System.out.println("Server Aluno: procurando Aluno");
 						if (Integer.parseInt(dados[2]) == tabelaAluno.getAlunos().get(i).getIdAluno()) {
-							// aluno = new Aluno();
 							aluno = tabelaAluno.getAlunos().get(i);
-							// aluno.setIdAluno(tabelaAluno.getAlunos().get(i).getIdAluno());
-							// aluno.setNomeAluno(tabelaAluno.getAlunos().get(i).getNomeAluno());
-
 							textoRetorna = objJson.toJson(aluno);
 							System.out.println(textoRetorna);
-
 							this.saida.println(textoRetorna);
 							this.saida.flush();
 							this.saida.close();
-
 							break;
 						}
+					}
+					if (i == tabelaAluno.getAlunos().size()) {
+						System.out.println("Aluno não encontrado");
+						codigoRetorna.setCodRetorno(4);
+						codigoRetorna.setDescricaoRetorno("Registro Não Encontrado");
+						textoRetorna = objJson.toJson(codigoRetorna);
+						System.out.println(textoRetorna);// mostra o que retorna
+						this.saida.println(textoRetorna);
+						this.saida.flush();
+						this.saida.close();
+					}
+				}
+				if (dados[1].equals("alunos")) {
+					System.out.println(dados[1]);
+					CodigoRetorna codigoRetorna = new CodigoRetorna();
+					textoRetorna = objJson.toJson(tabelaAluno);
+					System.out.println(textoRetorna);
+					this.saida.println(textoRetorna);
+					this.saida.flush();
+					this.saida.close();
+				}
+				if (dados[1].equals("apagaAluno")) {
+					boolean apagou = false;
+					CodigoRetorna codigoRetorna = new CodigoRetorna();
+					System.out.println(dados[1]);
+					for (i = 0; i < tabelaAluno.getAlunos().size(); i++) {
+						System.out.println("Server Aluno: procurando Aluno para apagar");
+						if (Integer.parseInt(dados[2]) == tabelaAluno.getAlunos().get(i).getIdAluno()) {
+							System.out.println("Server Aluno: Aluno encontrado\n Apagando Aluno.");
+							tabelaAluno.getAlunos().remove(i);
+							System.out.println("Server Turma: Gravando: " + dados[1]);
+							streamSaida = new ObjectOutputStream(new FileOutputStream(arquivo));
+							streamSaida.writeObject(tabelaAluno);// Grava o arraylist dentro do arquivo
+							streamSaida.close();
+							codigoRetorna.setCodRetorno(0);
+							codigoRetorna.setDescricaoRetorno("Requisição OK");
+							textoRetorna = objJson.toJson(codigoRetorna);
+							System.out.println(textoRetorna);// mostrando o conteudo json
+
+							this.saida.println(textoRetorna);// devolvendo para o cliente em json
+							this.saida.flush();
+							this.saida.close();
+							apagou = true;
+							break;
+						}
+					}
+					if (!apagou) {
+						codigoRetorna.setCodRetorno(4);
+						codigoRetorna.setDescricaoRetorno("Registro Não Encontrado");
+						textoRetorna = objJson.toJson(codigoRetorna);
+						System.out.println(textoRetorna);// mostrando o conteudo json
+						this.saida.println(textoRetorna);// devolvendo para o cliente em json
+						this.saida.flush();
+						this.saida.close();
 					}
 				}
 			} catch (IOException | ClassNotFoundException e) {

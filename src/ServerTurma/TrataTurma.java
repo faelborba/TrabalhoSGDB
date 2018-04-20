@@ -150,8 +150,8 @@ public class TrataTurma extends Thread implements Serializable {
 						}
 					}
 					if (!apagou) {
-						codigoRetorna.setCodRetorno(2);
-						codigoRetorna.setDescricaoRetorno("Erro de Relacionamento");
+						codigoRetorna.setCodRetorno(4);
+						codigoRetorna.setDescricaoRetorno("Registro Não Encontrado");
 						textoRetorna = objJson.toJson(codigoRetorna);
 						System.out.println(textoRetorna);// mostrando o conteudo json
 
@@ -184,8 +184,8 @@ public class TrataTurma extends Thread implements Serializable {
 					}
 					if (i == tabelaTurma.getTurmas().size()) {
 						System.out.println("Server Turma: Id Turma Não encontrado.");
-						codigoRetorna.setCodRetorno(2);
-						codigoRetorna.setDescricaoRetorno("Erro de Relacionamento");
+						codigoRetorna.setCodRetorno(4);
+						codigoRetorna.setDescricaoRetorno("Registro Não Encontrado");
 						textoRetorna = objJson.toJson(codigoRetorna);
 						System.out.println(textoRetorna);// mostrando o conteudo json
 
