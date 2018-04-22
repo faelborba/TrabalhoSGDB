@@ -29,10 +29,10 @@ public class TrataTurma extends Thread implements Serializable {
 		Turmas tabelaTurma = null;
 		Turma turma = null;
 		Gson objJson = new GsonBuilder().setPrettyPrinting().create();
+		//Gson gson = new Gson();
 		Scanner pegaTexto = null;
 		String caminhoBanco = "", textoConfig = "";
 		ConfigClass config = null;
-		Gson gson = new Gson();
 
 		int id;
 		String nome;
@@ -47,6 +47,14 @@ public class TrataTurma extends Thread implements Serializable {
 		arquivo = new File("tmp/ConfigClass.json");// fazendo um objeto arquivo
 		if (!arquivo.exists()) {// testando se o arquivo já existe, caso não exista cria um novo
 			System.out.println("Server Turma: Arquivo de configuração inexistente");
+			CodigoRetorna codigoRetorna = new CodigoRetorna();
+			codigoRetorna.setCodRetorno(3);
+			codigoRetorna.setDescricaoRetorno("Servidor Indisponível");
+			textoRetorna = objJson.toJson(codigoRetorna);
+			System.out.println(textoRetorna);// mostra o que retorna
+			this.saida.println(textoRetorna);
+			this.saida.flush();
+			this.saida.close();
 		} else {
 			System.out.println("Server Turma: Abrindo arquivo de configuração...");
 			try {
@@ -54,7 +62,7 @@ public class TrataTurma extends Thread implements Serializable {
 				textoConfig = new ConverteEmString().converteJson(pegaTexto);
 				System.out.println("Server Turma: *Arquivo ConfigClass.json*\n" + textoConfig);
 
-				config = gson.fromJson(textoConfig, ConfigClass.class);// converte json em object
+				config = objJson.fromJson(textoConfig, ConfigClass.class);// converte json em object
 				caminhoBanco = config.getDatafile();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -130,9 +138,9 @@ public class TrataTurma extends Thread implements Serializable {
 					for (i = 0; i < tabelaTurma.getTurmas().size(); i++) {
 						if (Integer.parseInt(dados[2]) == tabelaTurma.getTurmas().get(i).getIdTurma()) {
 							System.out.println("Server Turma: Id Turma encontrada.\n Apagando Registro.");
-							tabelaTurma.getTurmas().remove(i);//apagando do arraylist
+							tabelaTurma.getTurmas().remove(i);// apagando do arraylist
 
- 							System.out.println("Server Turma: Gravando: " + dados[1]);
+							System.out.println("Server Turma: Gravando: " + dados[1]);
 							streamSaida = new ObjectOutputStream(new FileOutputStream(arquivo));
 							streamSaida.writeObject(tabelaTurma);// Grava o arraylist dentro do arquivo
 							streamSaida.close();
@@ -155,7 +163,7 @@ public class TrataTurma extends Thread implements Serializable {
 						textoRetorna = objJson.toJson(codigoRetorna);
 						System.out.println(textoRetorna);// mostrando o conteudo json
 
-						this.saida.println(textoRetorna);// devolvendo para o cliente em json
+						this.saida.println(   );// devolvendo para o cliente em json
 						this.saida.flush();
 						this.saida.close();
 					}
@@ -167,10 +175,7 @@ public class TrataTurma extends Thread implements Serializable {
 					for (i = 0; i < tabelaTurma.getTurmas().size(); i++) {// testando ID já cadastrado.
 						System.out.println("Server Turma: procurando a turma");
 						if (Integer.parseInt(dados[2]) == tabelaTurma.getTurmas().get(i).getIdTurma()) {
-							turma = new Turma();
-							turma.setIdTurma(tabelaTurma.getTurmas().get(i).getIdTurma());
-							turma.setNomeTurma(tabelaTurma.getTurmas().get(i).getNomeTurma());
-
+							turma = tabelaTurma.getTurmas().get(i);
 							textoRetorna = objJson.toJson(turma);
 							System.out.println(textoRetorna);// mostrando o conteudo json
 
@@ -206,8 +211,8 @@ public class TrataTurma extends Thread implements Serializable {
 						this.saida.close();
 					} else {
 						System.out.println("Server Turma: Tabela turma vazia.");
-						codigoRetorna.setCodRetorno(2);
-						codigoRetorna.setDescricaoRetorno("Erro de Relacionamento");
+						codigoRetorna.setCodRetorno(4);
+						codigoRetorna.setDescricaoRetorno("Registro Não Encontrado");
 						textoRetorna = objJson.toJson(codigoRetorna);
 						System.out.println(textoRetorna);// mostrando o conteudo json
 

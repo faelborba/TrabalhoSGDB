@@ -174,13 +174,25 @@ public class TrataAluno extends Thread implements Serializable {
 					}
 				}
 				if (dados[1].equals("alunos")) {
-					System.out.println(dados[1]);
 					CodigoRetorna codigoRetorna = new CodigoRetorna();
-					textoRetorna = objJson.toJson(tabelaAluno);
-					System.out.println(textoRetorna);
-					this.saida.println(textoRetorna);
-					this.saida.flush();
-					this.saida.close();
+					if(tabelaAluno.getAlunos().size() == 0) {
+						System.out.println("Tabela Vazia");
+						codigoRetorna.setCodRetorno(4);
+						codigoRetorna.setDescricaoRetorno("Registro Não Encontrado");
+						textoRetorna = objJson.toJson(codigoRetorna);
+						System.out.println(textoRetorna);// mostra o que retorna
+						this.saida.println(textoRetorna);
+						this.saida.flush();
+						this.saida.close();
+					}else {
+						System.out.println(dados[1]);
+						textoRetorna = objJson.toJson(tabelaAluno);
+						System.out.println(textoRetorna);
+						this.saida.println(textoRetorna);
+						this.saida.flush();
+						this.saida.close();
+					}
+					
 				}
 				if (dados[1].equals("apagaAluno")) {
 					boolean apagou = false;
