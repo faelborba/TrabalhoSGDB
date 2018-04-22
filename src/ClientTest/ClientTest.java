@@ -54,12 +54,11 @@ public class ClientTest {
 					System.out.println("Digite o código do aluno para excluir.");
 					protocolo = "/aluno/" + teclado.nextLine();
 				} else if (r.equals("7")) {
+					System.out.println("Digite o codigo do aluno para ser excluido.");
+					protocolo = "/apagaAluno/" + teclado.nextLine();					
+				} else if (r.equals("8")) {
 					System.out.println("exclusão de Aluno.");
 					protocolo = "/alunos";
-				} else if (r.equals("8")) {
-					System.out.println("Digite o codigo do aluno para ser excluido.");
-					protocolo = "/apagaAluno/" + teclado.nextLine();
-					
 				}
 
 				System.out.println("Enviando protocolo " + protocolo + " para o server7!");
