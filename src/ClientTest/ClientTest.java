@@ -51,7 +51,7 @@ public class ClientTest {
 					System.out.println("Digite a Lista de turmas separado por virgula (,).");
 					protocolo = protocolo + "/" + teclado.nextLine();
 				} else if (r.equals("6")) {
-					System.out.println("Digite o código do aluno para excluir.");
+					System.out.println("Digite o código do aluno para Buscar.");
 					protocolo = "/aluno/" + teclado.nextLine();
 				} else if (r.equals("7")) {
 					System.out.println("Digite o codigo do aluno para ser excluido.");

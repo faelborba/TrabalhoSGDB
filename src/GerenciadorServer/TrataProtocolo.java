@@ -8,6 +8,8 @@ import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import ServerAluno.Aluno;
+import ServerAluno.Alunos;
 import ServerTurma.Turmas;
 import ServerTurma.Turma;
 
@@ -139,6 +141,36 @@ public class TrataProtocolo extends Thread implements Serializable {
 					System.out.println(textoJson);
 					CodigoRetorna codigoRetorna = objJson.fromJson(textoJson, CodigoRetorna.class);
 					textoRetorna = objJson.toJson(codigoRetorna);
+					System.out.println(textoRetorna);// mostrando o conteudo json
+					this.saida.println(textoRetorna);// devolvendo para o cliente em json
+					this.saida.flush();
+					this.saida.close();
+					socketAluno.close();
+				}
+				if (dados[1].equals("aluno")) {
+					System.out.println("GerenciadorServer: Enviando protocolo " + protocolo);
+					saidaAluno.println(protocolo);// envia protocolo ao server
+					saidaAluno.flush();
+
+					textoJson = new ConverteEmString().converteJson(entradaAluno);// converte entrada e emstring
+					System.out.println(textoJson);
+					Aluno aluno = objJson.fromJson(textoJson, Aluno.class);
+					textoRetorna = objJson.toJson(aluno);
+					System.out.println(textoRetorna);// mostrando o conteudo json
+					this.saida.println(textoRetorna);// devolvendo para o cliente em json
+					this.saida.flush();
+					this.saida.close();
+					socketAluno.close();
+				}
+				if (dados[1].equals("alunos")) {
+					System.out.println("GerenciadorServer: Enviando protocolo " + protocolo);
+					saidaAluno.println(protocolo);// envia protocolo ao server
+					saidaAluno.flush();
+
+					textoJson = new ConverteEmString().converteJson(entradaAluno);// converte entrada e emstring
+					System.out.println(textoJson);
+					Alunos alunos =  objJson.fromJson(textoJson, Alunos.class);
+					textoRetorna = objJson.toJson(alunos);
 					System.out.println(textoRetorna);// mostrando o conteudo json
 					this.saida.println(textoRetorna);// devolvendo para o cliente em json
 					this.saida.flush();
