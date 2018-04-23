@@ -42,7 +42,7 @@ public class ClientTest {
 					protocolo = "/apagaTurma/" + teclado.nextLine();
 				} else if (r.equals("4")) {
 					System.out.println("exclusão de Turma");
-					protocolo = "/turmas/";
+					protocolo = "/turmas";
 				} else if (r.equals("5")) {
 					System.out.println("Digite o codigo do Aluno a ser inserido");
 					protocolo = "/incluiAluno/" + teclado.nextLine();

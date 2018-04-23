@@ -76,7 +76,7 @@ public class TrataProtocolo extends Thread implements Serializable {
 				Socket socketAluno = new Socket(ipAluno, portaAluno);// conecta no serveraluno
 				Scanner entradaAluno = new Scanner(new InputStreamReader(socketAluno.getInputStream()));
 				PrintWriter saidaAluno = new PrintWriter(socketAluno.getOutputStream());
-				
+
 				if (dados[1].equals("incluiTurma") || dados[1].equals("apagaTurma")) {
 					System.out.println("GerenciadorServer: Enviando protocolo " + protocolo);
 					saidaTurma.println(protocolo);// envia protocolo ao server
@@ -96,20 +96,33 @@ public class TrataProtocolo extends Thread implements Serializable {
 					System.out.println("GerenciadorServer: Enviando protocolo " + protocolo);
 					saidaTurma.println(protocolo);// envia protocolo ao server
 					saidaTurma.flush();
-
 					textoJson = new ConverteEmString().converteJson(entradaTurma);// converte entrada e em string
 					System.out.println(textoJson);// teste do que veio de turma
-					Turma turma = objJson.fromJson(textoJson, Turma.class);// Converte String em Objeto turma
-
-					/*
-					 * TurmaAluno turmaAluno = new TurmaAluno();
-					 * turmaAluno.setIdTurma(turma.getIdTurma());
-					 * turmaAluno.setNomeTurma(turma.getNomeTurma());
-					 * 
-					 * Alunos aluos =
-					 */
-
-					textoRetorna = objJson.toJson(turma);
+					
+					TurmaAluno turmaAluno = objJson.fromJson(textoJson, TurmaAluno.class);// Converte em Obj turma
+					saidaAluno.println("/alunos");
+					saidaAluno.flush();
+					textoJson = new ConverteEmString().converteJson(entradaAluno);// converte entrada e em string
+					System.out.println(textoJson);// teste do que veio de turma
+					Alunos alunos = objJson.fromJson(textoJson, Alunos.class);// Converte String em Objeto alunos
+					
+					AlunosSemTurma alunosSemTurma = new AlunosSemTurma();
+					AlunoSemTurma alunoSemTurma = new AlunoSemTurma();
+					for (int i = 0; i < alunos.getAlunos().size(); i++) {
+						for(int j = 0; j < alunos.getAlunos().get(i).getTurmas().size(); j++) {
+							if(turmaAluno.getIdTurma() == alunos.getAlunos().get(i).getTurmas().get(j).getIdTurma()) {
+								alunoSemTurma.setIdAluno(alunos.getAlunos().get(i).getIdAluno());
+								alunoSemTurma.setNomeAluno(alunos.getAlunos().get(i).getNomeAluno());
+								alunosSemTurma.getAlunos().add(alunoSemTurma);
+								//alunosSemTurma.setAlunos(alunos.getAlunos().get(i).getTurmas().get(j));
+							}
+						}
+					}
+					TurmaAlunoFinal turmaAlunoFinal = new TurmaAlunoFinal();
+					turmaAlunoFinal.setAlunos(alunosSemTurma);
+					//turmaAluno.setAlunos(alunosSemTurma);
+					
+					textoRetorna = objJson.toJson(turmaAlunoFinal);
 					System.out.println(textoRetorna);// mostrando o conteudo json
 					this.saida.println(textoRetorna);// devolvendo para o cliente em json
 					this.saida.flush();
@@ -169,7 +182,7 @@ public class TrataProtocolo extends Thread implements Serializable {
 
 					textoJson = new ConverteEmString().converteJson(entradaAluno);// converte entrada e emstring
 					System.out.println(textoJson);
-					Alunos alunos =  objJson.fromJson(textoJson, Alunos.class);
+					Alunos alunos = objJson.fromJson(textoJson, Alunos.class);
 					textoRetorna = objJson.toJson(alunos);
 					System.out.println(textoRetorna);// mostrando o conteudo json
 					this.saida.println(textoRetorna);// devolvendo para o cliente em json
