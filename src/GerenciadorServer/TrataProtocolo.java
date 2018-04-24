@@ -98,30 +98,39 @@ public class TrataProtocolo extends Thread implements Serializable {
 					saidaTurma.flush();
 					textoJson = new ConverteEmString().converteJson(entradaTurma);// converte entrada e em string
 					System.out.println(textoJson);// teste do que veio de turma
-					
 					TurmaAluno turmaAluno = objJson.fromJson(textoJson, TurmaAluno.class);// Converte em Obj turma
+
 					saidaAluno.println("/alunos");
 					saidaAluno.flush();
 					textoJson = new ConverteEmString().converteJson(entradaAluno);// converte entrada e em string
 					System.out.println(textoJson);// teste do que veio de turma
 					Alunos alunos = objJson.fromJson(textoJson, Alunos.class);// Converte String em Objeto alunos
+
+					// AlunosSemTurma alunosSemTurma = new AlunosSemTurma();
+					ArrayList<AlunoSemTurma> alunosSemTurma = new ArrayList<>();
+					AlunoSemTurma alunoSemTurma = null;
 					
-					AlunosSemTurma alunosSemTurma = new AlunosSemTurma();
-					AlunoSemTurma alunoSemTurma = new AlunoSemTurma();
-					for (int i = 0; i < alunos.getAlunos().size(); i++) {
-						for(int j = 0; j < alunos.getAlunos().get(i).getTurmas().size(); j++) {
-							if(turmaAluno.getIdTurma() == alunos.getAlunos().get(i).getTurmas().get(j).getIdTurma()) {
-								alunoSemTurma.setIdAluno(alunos.getAlunos().get(i).getIdAluno());
-								alunoSemTurma.setNomeAluno(alunos.getAlunos().get(i).getNomeAluno());
-								alunosSemTurma.getAlunos().add(alunoSemTurma);
-								//alunosSemTurma.setAlunos(alunos.getAlunos().get(i).getTurmas().get(j));
+					try {
+						for (int i = 0; i < alunos.getAlunos().size(); i++) {
+							for (int j = 0; j < alunos.getAlunos().get(i).getTurmas().size(); j++) {
+								if (turmaAluno.getIdTurma() == alunos.getAlunos().get(i).getTurmas().get(j)
+										.getIdTurma()) {
+									alunoSemTurma = new AlunoSemTurma();
+									alunoSemTurma.setIdAluno(alunos.getAlunos().get(i).getIdAluno());
+									alunoSemTurma.setNomeAluno(alunos.getAlunos().get(i).getNomeAluno());
+									alunosSemTurma.add(alunoSemTurma);
+								}
 							}
 						}
+					} catch (NullPointerException e) {
+						System.out.println("NullPointerException caught");
 					}
+
 					TurmaAlunoFinal turmaAlunoFinal = new TurmaAlunoFinal();
+					turmaAlunoFinal.setIdTurma(turmaAluno.getIdTurma());
+					turmaAlunoFinal.setNomeTurma(turmaAluno.getNomeTurma());
 					turmaAlunoFinal.setAlunos(alunosSemTurma);
-					//turmaAluno.setAlunos(alunosSemTurma);
-					
+
 					textoRetorna = objJson.toJson(turmaAlunoFinal);
 					System.out.println(textoRetorna);// mostrando o conteudo json
 					this.saida.println(textoRetorna);// devolvendo para o cliente em json
